@@ -28,7 +28,7 @@ def mostrar_lista():
     texto = "--- Productos ---\n"
     for producto in productos:
         # producto = (id, nombre_producto, stock_disponible, precio)
-        texto += f"ID:{producto[0]}"+f"Nombre:{producto[1]}" +f"Stock disponible:{producto[2]}" + f"Precio:{producto[3]}"
+        texto += f"ID: {producto[0]} "+f"Nombre: {producto[1]} " +f"Stock disponible: {producto[2]} " + f"Precio: {producto[3]} "
         print(texto)
 
 def agregar_nuevo_producto(nombre_producto,stock_disponible,precio):
@@ -41,7 +41,7 @@ def agregar_nuevo_producto(nombre_producto,stock_disponible,precio):
     producto = Producto(nombre_producto,stock_disponible,precio)
     cursor.execute("INSERT INTO productos(nombre_producto,stock_disponible,precio) VALUES (?,?,?)",(producto.nombre_producto,producto.stock_disponible,producto.precio))
     conexion.commit()
-    print(f"Producto agregado:{producto.mostrar_datos()}")
+    print(f"Producto agregado: {producto.mostrar_datos()}")
 
 def eliminar_producto(nombre_producto):
     if nombre_producto =="":
@@ -65,19 +65,19 @@ while True:
     print("1. Agregar")
     print("2. Eliminar")
     print("3. Mostrar lista")
-    op=input("Seleccione opcion")
+    op=input("Seleccione opcion\n")
     if op=="0":
         conexion.close()
         break
     elif op=="1":
         print("Ingrese los datos de su producto")
-        nombre_producto=input("Nombre del producto ")
-        stock_disponible=int(input("Stock disponible "))
-        precio=int(input("Precio "))
+        nombre_producto=input("Nombre del producto\n")
+        stock_disponible=int(input("Stock disponible\n"))
+        precio=int(input("Precio\n"))
         agregar_nuevo_producto(nombre_producto,stock_disponible,precio)
     elif op=="2":
         print("Ingrese el nombre de su producto")
-        nombre_producto=input("Nombre del producto ")
+        nombre_producto=input("Nombre del producto\n")
         eliminar_producto(nombre_producto)
     elif op=="3":
         mostrar_lista()
