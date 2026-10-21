@@ -42,6 +42,29 @@ def eliminar_empleado():
         pass
 
 
+def cargar_empleado_a_editar():
+    global indice_edicion
+    try:
+       
+        indice_edicion = lista_empleados.curselection()[0]
+        texto_registro = lista_empleados.get(indice_edicion)
+        
+     
+        limpiar_formulario()
+        
+       
+        partes = [p.split(": ")[1] for p in texto_registro.split(" | ")]
+        
+       
+        entrada_nombre.insert(0, partes[0])
+        entrada_anios.insert(0, partes[1])
+        entrada_dni.insert(0, partes[2])
+        entrada_asistencias.insert(0, partes[3])
+        entrada_justificadas.insert(0, partes[4])
+    except IndexError:
+        pass 
+
+
 def guardar_edicion():
     global indice_edicion
     if indice_edicion is not None:
@@ -79,7 +102,7 @@ indice_edicion = None
 
 ventana = tk.Tk()
 ventana.title("Empleados data")
-ventana.geometry("880x880")
+ventana.geometry("920x880") 
 ventana.configure(bg="#970202")
 
 
@@ -151,8 +174,15 @@ boton_crear = tk.Button(
 )
 boton_crear.pack(side="left", padx=5)
 
+
+boton_cargar = tk.Button(
+    marco_botones, text="Seleccionar para editar", font=("Consolas", 11, "bold"),
+    bg="#000000", fg="white", command=cargar_empleado_a_editar, padx=8, pady=4
+)
+boton_cargar.pack(side="left", padx=5)
+
 boton_actualizar = tk.Button(
-    marco_botones, text="Editar cambios", font=("Consolas", 11, "bold"),
+    marco_botones, text="Confirmar edicion de cambios", font=("Consolas", 11, "bold"),
     bg="#000000", fg="white", command=guardar_edicion, padx=8, pady=4
 )
 boton_actualizar.pack(side="left", padx=5)
@@ -176,5 +206,6 @@ for nombre, anios, dni, asistencias, justificadas in empleados_iniciales:
     lista_empleados.insert(tk.END, registro)
 
 ventana.mainloop()
+
 
 
