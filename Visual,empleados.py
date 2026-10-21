@@ -4,50 +4,95 @@
 import tkinter as tk
 from tkinter import ttk
 
+SUELDO_BASE = 500000
+
+
+def calcular_bonificacion(asistencias, justificadas):
+    try:
+        asist_totales = int(asistencias) + int(justificadas)
+        if asist_totales >= 24:
+            return f"${int(SUELDO_BASE * 0.10)}"
+        return "$0"
+    except ValueError:
+        return "$0"
 
 def agregar_empleado():
     nombre = entrada_nombre.get().strip()
-    puesto = entrada_cargar.get().strip()
-    stock_id = entrada_stock.get().strip()
+    anios = entrada_anios.get().strip()
+    dni = entrada_dni.get().strip()
+    asistencias = entrada_asistencias.get().strip()
+    justificadas = entrada_justificadas.get().strip()
     
-    if nombre and puesto and stock_id:
-
-        registro = f"Nombre: {nombre} | Puesto: {puesto} | DNI: {stock_id}"
-        lista_empleados.insert(tk.END, registro)
+    if nombre and anios and dni and asistencias and justificadas:
+        bono = calcular_bonificacion(asistencias, justificadas)
         
 
-        entrada_nombre.delete(0, tk.END)
-        entrada_cargar.delete(0, tk.END)
-        entrada_stock.delete(0, tk.END)
+        registro = (f"Nombre: {nombre} | Años: {anios} | DNI: {dni} | "
+                    f"Asist: {asistencias} | Justif: {justificadas} | Bono: {bono}")
+        
+        lista_empleados.insert(tk.END, registro)
+        limpiar_formulario()
 
 
 def eliminar_empleado():
     try:
-
         indice_seleccionado = lista_empleados.curselection()[0]
         lista_empleados.delete(indice_seleccionado)
     except IndexError:
         pass
 
 
+def guardar_edicion():
+    global indice_edicion
+    if indice_edicion is not None:
+        nombre = entrada_nombre.get().strip()
+        anios = entrada_anios.get().strip()
+        dni = entrada_dni.get().strip()
+        asistencias = entrada_asistencias.get().strip()
+        justificadas = entrada_justificadas.get().strip()
+        
+        if nombre and anios and dni and asistencias and justificadas:
+            bono = calcular_bonificacion(asistencias, justificadas)
+            
+            registro_actualizado = (f"Nombre: {nombre} | Años: {anios} | DNI: {dni} | "
+                                    f"Asist: {asistencias} | Justif: {justificadas} | Bono: {bono}")
+            
+
+            lista_empleados.delete(indice_edicion)
+            lista_empleados.insert(indice_edicion, registro_actualizado)
+            
+            indice_edicion = None
+            limpiar_formulario()
+
+
+def limpiar_formulario():
+    entrada_nombre.delete(0, tk.END)
+    entrada_anios.delete(0, tk.END)
+    entrada_dni.delete(0, tk.END)
+    entrada_asistencias.delete(0, tk.END)
+    entrada_justificadas.delete(0, tk.END)
+
+
+
+indice_edicion = None
+
 
 ventana = tk.Tk()
 ventana.title("Empleados data")
-ventana.geometry("800x800")
+ventana.geometry("880x880")
 ventana.configure(bg="#970202")
 
 
-encabezado = tk.Frame(ventana, height=105)
+encabezado = tk.Frame(ventana, height=105, bg="#FFAB00")
 encabezado.pack(fill="x")
 encabezado.pack_propagate(False)
-encabezado.config(bg="black")
 
 tk.Label(
     encabezado,
     text="Empleados de Rockstar",
     font=("Consolas", 25, "bold"),
-    bg="black",
-    fg="white",
+    bg="#FFAB00",
+    fg="black",
 ).pack(anchor="center", pady=(28, 0))
 
 marco_titulo = tk.Frame(ventana, bg="#fffefe", height=20)
@@ -60,14 +105,12 @@ estilo.theme_use("clam")
 marco_lista = tk.Frame(ventana, bg="#970202")
 marco_lista.pack(pady=20, fill="both", expand=True, padx=50)
 
-
 scrollbar = tk.Scrollbar(marco_lista, orient="vertical")
 scrollbar.pack(side="right", fill="y")
 
-
 lista_empleados = tk.Listbox(
     marco_lista, 
-    font=("Consolas", 11), 
+    font=("Consolas", 10), 
     bg="#1a1a1a", 
     fg="white", 
     selectbackground="#fffefe", 
@@ -78,49 +121,60 @@ lista_empleados.pack(side="left", fill="both", expand=True)
 scrollbar.config(command=lista_empleados.yview)
 
 
+tk.Label(ventana, text="Nombre del Empleado:", font=("Consolas", 11, "bold"), bg="#970202", fg="white").pack(pady=(5, 0))
+entrada_nombre = tk.Entry(ventana, font=("Consolas", 11), width=45)
+entrada_nombre.pack(pady=3)
 
-tk.Label(
-    ventana, text="Nombre del Empleado:", font=("Consolas", 11, "bold"), bg="#970202", fg="white"
-).pack(pady=(10, 0))
-entrada_nombre = tk.Entry(ventana, font=("Consolas", 11), width=40)
-entrada_nombre.pack(pady=5)
+tk.Label(ventana, text="Años Trabajando:", font=("Consolas", 11, "bold"), bg="#970202", fg="white").pack(pady=(5, 0))
+entrada_anios = tk.Entry(ventana, font=("Consolas", 11), width=45)
+entrada_anios.pack(pady=3)
 
-tk.Label(
-    ventana, text="Puesto:", font=("Consolas", 11, "bold"), bg="#970202", fg="white"
-).pack(pady=(10, 0))
-entrada_cargar = tk.Entry(ventana, font=("Consolas", 11), width=40)
-entrada_cargar.pack(pady=5)
+tk.Label(ventana, text="DNI:", font=("Consolas", 11, "bold"), bg="#970202", fg="white").pack(pady=(5, 0))
+entrada_dni = tk.Entry(ventana, font=("Consolas", 11), width=45)
+entrada_dni.pack(pady=3)
 
-tk.Label(
-    ventana, text="DNI:", font=("Consolas", 11, "bold"), bg="#970202", fg="white"
-).pack(pady=(10, 0))
-entrada_stock = tk.Entry(ventana, font=("Consolas", 11), width=40)
-entrada_stock.pack(pady=5)
+tk.Label(ventana, text="Asistencias Mensuales:", font=("Consolas", 11, "bold"), bg="#970202", fg="white").pack(pady=(5, 0))
+entrada_asistencias = tk.Entry(ventana, font=("Consolas", 11), width=45)
+entrada_asistencias.pack(pady=3)
+
+tk.Label(ventana, text="Asistencias Justificadas (Faltas con Justificativo):", font=("Consolas", 11, "bold"), bg="#970202", fg="white").pack(pady=(5, 0))
+entrada_justificadas = tk.Entry(ventana, font=("Consolas", 11), width=45)
+entrada_justificadas.pack(pady=3)
 
 
+marco_botones = tk.Frame(ventana, bg="#970202")
+marco_botones.pack(pady=15)
 
-boton1 = tk.Button(
-    ventana,
-    text="Contratar Empleado",
-    font=("Consolas", 11, "bold"),
-    bg="#000000",
-    fg="white",
-    command=agregar_empleado, 
-    padx=10,
-    pady=5
+boton_crear = tk.Button(
+    marco_botones, text="Contratar empleado", font=("Consolas", 11, "bold"),
+    bg="#000000", fg="white", command=agregar_empleado, padx=8, pady=4
 )
-boton1.pack(pady=10)
+boton_crear.pack(side="left", padx=5)
 
-boton2 = tk.Button(
-    ventana,
-    text="Despedir empleado",
-    font=("Consolas", 11, "bold"),
-    bg="#000000",
-    fg="white",
-    command=eliminar_empleado, 
-    padx=10,
-    pady=5
+boton_actualizar = tk.Button(
+    marco_botones, text="Editar cambios", font=("Consolas", 11, "bold"),
+    bg="#000000", fg="white", command=guardar_edicion, padx=8, pady=4
 )
-boton2.pack(pady=5)
+boton_actualizar.pack(side="left", padx=5)
+
+boton_eliminar = tk.Button(
+    marco_botones, text="Despedir empleado", font=("Consolas", 11, "bold"),
+    bg="#000000", fg="white", command=eliminar_empleado, padx=8, pady=4
+)
+boton_eliminar.pack(side="left", padx=5)
+
+empleados_iniciales = [
+    ("Kenny Galindo", "3", "44555666", "20", "2"),
+    ("Juancho Tazo", "5", "11222333", "22", "3"),
+    ("Solomeo Paredes", "2", "77888999", "24", "0")
+]
+
+for nombre, anios, dni, asistencias, justificadas in empleados_iniciales:
+    bono = calcular_bonificacion(asistencias, justificadas)
+    registro = (f"Nombre: {nombre} | Años: {anios} | DNI: {dni} | "
+                f"Asist: {asistencias} | Justif: {justificadas} | Bono: {bono}")
+    lista_empleados.insert(tk.END, registro)
 
 ventana.mainloop()
+
+
