@@ -47,58 +47,43 @@ def agregar_nuevo_empleado(nombre,tiempo_servido,dni,asistencias_mensuales):
     conexion.commit()
     print(f"Empleado agregado: {empleado.mostrar_datos()}")
 
-def modificar_empleado(nombre,dni):
+def modificar_empleado(nombre, dni):
     if nombre == "" or dni == "":
         print("Complete todos los campos")
         return
-    cursor.execute("SELECT * FROM empleados WHERE nombre = ? AND dni = ?",(nombre,dni,))
+    cursor.execute("SELECT * FROM empleados WHERE nombre = ? AND dni = ?", (nombre, dni))
     empleado = cursor.fetchall()
-
-    if not empleado:
-        print("No hay registros de ese empleado")
-        return
-    #ahora tomo los datos de todo lo que escribi
     while True:
-        print("Seleccione los datos a modificar (seleccione el dato usando un numero) ",mostrar_lista())
+        print("Seleccione los datos a modificar (seleccione el dato usando un numero)")
         print("1. Nombre\n2. Tiempo servido\n3. DNI\n4. Asistencias\n0. Salir")
-        select= input("")
-        if select == "1":
+        select = input()
+        if select == "0":
+            break
+        elif select == "1":
             nuevo_nombre = input("Nuevo dato: ")
-            cursor.execute(
-                "UPDATE empleados SET nombre = ? WHERE nombre = ? AND dni = ?",
-                (nuevo_nombre, nombre, dni),
-            )
+            cursor.execute("UPDATE empleados SET nombre = ? WHERE nombre = ? AND dni = ?", (nuevo_nombre, nombre, dni))
             conexion.commit()
-            nombre = (
-            )
+            nombre = nuevo_nombre
             print("Empleado modificado correctamente")
         elif select == "2":
             nuevo_tiempo_servido = int(input("Nuevo dato: "))
-            cursor.execute(
-                "UPDATE empleados SET tiempo_servido = ? WHERE nombre = ? AND dni = ?",
-                (nuevo_tiempo_servido, nombre, dni),
-            )
+            cursor.execute("UPDATE empleados SET tiempo_servido = ? WHERE nombre = ? AND dni = ?", (nuevo_tiempo_servido, nombre, dni))
             conexion.commit()
             print("Empleado modificado correctamente")
         elif select == "3":
             nuevo_dni = int(input("Nuevo dato: "))
-            cursor.execute(
-                "UPDATE empleados SET dni = ? WHERE nombre = ? AND dni = ?",
-                (nuevo_dni, nombre, dni),
-            )
+            cursor.execute("UPDATE empleados SET dni = ? WHERE nombre = ? AND dni = ?", (nuevo_dni, nombre, dni))
             conexion.commit()
             dni = nuevo_dni
             print("Empleado modificado correctamente")
         elif select == "4":
             nuevas_asistencias_mensuales = int(input("Nuevo dato: "))
-            cursor.execute(
-                "UPDATE empleados SET asistencias_mensuales = ? WHERE nombre = ? AND dni = ?",
-                (nuevas_asistencias_mensuales, nombre, dni),
-            )
+            cursor.execute("UPDATE empleados SET asistencias_mensuales = ? WHERE nombre = ? AND dni = ?", (nuevas_asistencias_mensuales, nombre, dni))
             conexion.commit()
             print("Empleado modificado correctamente")
         else:
             print("Error, intente devuelta")
+            #Arreglar el condicional del empleado
 
 def eliminar_empleado(nombre,dni):
     if nombre == "" or dni == "":
